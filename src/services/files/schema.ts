@@ -14,13 +14,17 @@ export const FilesSchema = z.array(
   })
 )
 
-export const FileContentSchema = z.array(
-  z.object({
-    StoreID: z.string(),
-    Customer_ID: z.string(),
-    'Postal Code': z.string(),
-    Total_Visits: z.string(),
-    'Dollars Spend': z.string(),
-    'Product Type': z.string(),
-  })
-)
+export const FileContent = z.object({
+  StoreID: z.string(),
+  Customer_ID: z.string(),
+  'Postal Code': z.string(),
+  Total_Visits: z.string(),
+  'Dollars Spend': z.string(),
+  'Product Type': z.string(),
+})
+
+export const FileContentSchema = z.array(FileContent)
+
+export const ProccessedFileContentSchema = z.array(FileContent.extend({
+  prizmId: z.number().nullable(),
+}))

@@ -1,5 +1,5 @@
-import { useQuery } from "react-query"
-import { getFileContent, getFiles } from "./request";
+import { useMutation, useQuery } from "react-query"
+import { getFileContent, getFiles, proccessFile } from "./request";
 import { FileContentResponse, FilesResponse } from "./types";
 
 export const useFiles = () => {
@@ -31,3 +31,7 @@ export const useFileContent = ({ key, enabled, isPreview }: { key?: string; enab
     refetch,
   };
 };
+
+export const useProcessFile = ({ key }: { key?: string } = {}) => {
+  return useMutation(['processFile', { key }], proccessFile)
+}
