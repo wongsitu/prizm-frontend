@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useFileContent, useFiles, useProcessFile } from "../../services/files/files";
 import clsx from "clsx";
 import { queryClient } from "../../services/api";
+import Loader from "../Loader";
 
 const Dashboard = () => {
   const { data } = useFiles();
@@ -10,9 +11,8 @@ const Dashboard = () => {
   const [showAllFiles, setShowAllFiles] = useState<boolean>(true);
 
   const { data: fileContent } = useFileContent({ path: selectedFile, enabled: showPreview, isPreview: showAllFiles })
-  const { mutateAsync } = useProcessFile({ 
+  const { mutateAsync, status } = useProcessFile({ 
     onSuccess: () => {
-      console.log('hiii')
       queryClient.invalidateQueries(['getFileContent', { path: selectedFile, isPreview: showAllFiles }]);
     }
   })
@@ -20,6 +20,13 @@ const Dashboard = () => {
   const isParsed = (fileContent && 'prizmId' in fileContent[0]) || false;
 
   const renderTable = () => {
+    if (status === 'loading') {
+      return (
+        <div className="flex justify-center">
+          <Loader />
+        </div>
+      )
+    }
     if (fileContent && showPreview) {
       return (
         <>
@@ -111,8 +118,10 @@ const Dashboard = () => {
         <div>
           <input
             type="text"
-            placeholder="Search"
+            placeholder="Selected path"
             className="p-2 border border-gray-300 rounded-l focus:outline-none mr-4"
+            value={selectedFile}
+            readOnly
           />
           <button 
             disabled={!selectedFile || showPreview} 
@@ -121,7 +130,8 @@ const Dashboard = () => {
           >
             Preview
           </button>
-          {showPreview && (
+          {}
+          {showPreview && status !== 'loading' && (
             <button 
               disabled={!selectedFile || isParsed} 
               onClick={()=> { mutateAsync({ path: selectedFile }) }} 
@@ -132,7 +142,7 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div>
         {renderTable()}
       </div>
     </div>
