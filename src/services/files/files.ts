@@ -15,11 +15,11 @@ export const useFiles = () => {
   };
 };
 
-export const useFileContent = ({ key, enabled, isPreview }: { key?: string; enabled?: boolean; isPreview?: boolean } = {}) => {
+export const useFileContent = ({ path, enabled, isPreview }: { path?: string; enabled?: boolean; isPreview?: boolean } = {}) => {
   const { data, status, refetch } = useQuery<FileContentResponse>(
-    ['getFileContent', { key, isPreview }], 
+    ['getFileContent', { path, isPreview }], 
     getFileContent, 
-    { enabled: !!key && !key.endsWith('/') && enabled }
+    { enabled: !!path && !path.endsWith('/') && enabled }
   );
 
   const files = data || [];
@@ -32,6 +32,6 @@ export const useFileContent = ({ key, enabled, isPreview }: { key?: string; enab
   };
 };
 
-export const useProcessFile = ({ key }: { key?: string } = {}) => {
-  return useMutation(['processFile', { key }], proccessFile)
+export const useProcessFile = () => {
+  return useMutation(['processFile'], proccessFile)
 }
