@@ -21,10 +21,9 @@ export const FileContent = z.object({
   Total_Visits: z.string(),
   'Dollars Spend': z.string(),
   'Product Type': z.string(),
+  prizmId: z.union([z.string(), z.number(), z.undefined()]).optional(),
 })
 
 export const FileContentSchema = z.array(FileContent)
 
-export const ProccessedFileContentSchema = z.array(FileContent.extend({
-  prizmId: z.number().nullable(),
-}))
+export const ProccessedFileContentSchema = z.array(FileContent)

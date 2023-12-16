@@ -23,6 +23,7 @@ const Dashboard = () => {
                 <th className="border border-gray-300 p-3">Postal Code</th>
                 <th className="border border-gray-300 p-3">Total_Visits</th>
                 <th className="border border-gray-300 p-3">Dollars Spend</th>
+                {fileContent[0].prizmId && <th className="border border-gray-300 p-3">PrizmId</th>}
               </tr>
             </thead>
             <tbody>
@@ -37,6 +38,7 @@ const Dashboard = () => {
                     <td className="border border-gray-300 p-3">{content['Postal Code']}</td>
                     <td className="border border-gray-300 p-3">{content.Total_Visits}</td>
                     <td className="border border-gray-300 p-3">{content['Dollars Spend']}</td>
+                    {content.prizmId && <td className="border border-gray-300 p-3">{content.prizmId}</td>}
                   </tr>
                 )}
               )}
