@@ -9,11 +9,15 @@ const Dashboard = () => {
   const [selectedFile, setSelectedFile] = useState<string>('');
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showAllFiles, setShowAllFiles] = useState<boolean>(true);
+  const [processedFilesNumber, setProcessedFilesNumber] = useState(0)
 
-  const { data: fileContent } = useFileContent({ path: selectedFile, enabled: showPreview, isPreview: showAllFiles })
+  const { data: fileContent, status: fileContentStatus } = useFileContent({ path: selectedFile, enabled: showPreview, isPreview: showAllFiles })
   const { mutateAsync, status } = useProcessFile({ 
-    onSuccess: () => {
-      queryClient.invalidateQueries(['getFileContent', { path: selectedFile, isPreview: showAllFiles }]);
+    onSuccess: (data) => {
+      if (data){
+        queryClient.invalidateQueries(['getFileContent', { path: selectedFile, isPreview: showAllFiles }]);
+        setProcessedFilesNumber(data.length)
+      }
     }
   })
 
@@ -115,32 +119,39 @@ const Dashboard = () => {
   return (
       <div className="container mx-auto my-8 p-6 bg-gray-100 rounded-lg shadow-md">
       <div className="mb-4 flex justify-between">
-        <div>
-          <input
-            type="text"
-            placeholder="Selected path"
-            className="p-2 border border-gray-300 rounded-l focus:outline-none mr-4"
-            value={selectedFile}
-            readOnly
-          />
-          <button 
-            disabled={!selectedFile || showPreview} 
-            onClick={()=> setShowPreview(state => !state) } 
-            className="bg-blue-500 text-white p-2 rounded-r rounded-l hover:bg-blue-600 disabled:bg-gray-300"
-          >
-            Preview
-          </button>
-          {}
-          {showPreview && status !== 'loading' && (
+        {status === 'success' ? (
+          <div>
+            <p className="mb-4">File: {selectedFile}</p>
+            <p>Records: {processedFilesNumber}</p>
+          </div>
+        ) : (
+          <div>
+            <input
+              type="text"
+              placeholder="Selected path"
+              className="p-2 border border-gray-300 rounded-l focus:outline-none mr-4"
+              value={selectedFile}
+              readOnly
+            />
             <button 
-              disabled={!selectedFile || isParsed} 
-              onClick={()=> { mutateAsync({ path: selectedFile }) }} 
-              className="bg-green-500 text-white p-2 ml-2 rounded-r rounded-l hover:bg-green-600 disabled:bg-gray-300"
+              disabled={!selectedFile || showPreview} 
+              onClick={()=> setShowPreview(state => !state) } 
+              className="bg-blue-500 text-white p-2 rounded-r rounded-l hover:bg-blue-600 disabled:bg-gray-300"
             >
-              Process
+              Preview
             </button>
-          )}
-        </div>
+            {showPreview && status !== 'loading' && (
+              <button 
+                disabled={!selectedFile || isParsed || fileContentStatus === 'loading'} 
+                onClick={()=> { mutateAsync({ path: selectedFile }) }} 
+                className="bg-green-500 text-white p-2 ml-2 rounded-r rounded-l hover:bg-green-600 disabled:bg-gray-300"
+              >
+                Process
+              </button>
+            )}
+          </div>
+        )}
+        
       </div>
       <div>
         {renderTable()}
