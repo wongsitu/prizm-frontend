@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useFileContent, useFiles, useProcessFile } from "../../services/files/files";
 import clsx from "clsx";
 import { queryClient } from "../../services/api";
-import Loader from "../Loader";
+import Loader from "../../components/Loader";
 
 const Dashboard = () => {
   const { data } = useFiles();
