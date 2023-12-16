@@ -1,16 +1,8 @@
 // src/App.js
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import './index.css'; // Import Tailwind CSS
 import Dashboard from './pages/Dashboard/Dahsboard';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchOnMount : false,
-    },
-  },
-})
+import { queryClient } from './services/api';
 
 const App = () => {
   return (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useFileContent, useFiles, useProcessFile } from "../../services/files/files";
 import clsx from "clsx";
+import { queryClient } from "../../services/api";
 
 const Dashboard = () => {
   const { data } = useFiles();
@@ -9,7 +10,14 @@ const Dashboard = () => {
   const [showAllFiles, setShowAllFiles] = useState<boolean>(true);
 
   const { data: fileContent } = useFileContent({ path: selectedFile, enabled: showPreview, isPreview: showAllFiles })
-  const { mutateAsync } = useProcessFile()
+  const { mutateAsync } = useProcessFile({ 
+    onSuccess: () => {
+      console.log('hiii')
+      queryClient.invalidateQueries(['getFileContent', { path: selectedFile, isPreview: showAllFiles }]);
+    }
+  })
+
+  const isParsed = (fileContent && 'prizmId' in fileContent[0]) || false;
 
   const renderTable = () => {
     if (fileContent && showPreview) {
@@ -113,13 +121,15 @@ const Dashboard = () => {
           >
             Preview
           </button>
-          <button 
-            disabled={!selectedFile} 
-            onClick={()=> { mutateAsync({ path: selectedFile }) }} 
-            className="bg-green-500 text-white p-2 ml-2 rounded-r rounded-l hover:bg-green-600 disabled:bg-gray-300"
-          >
-            Process
-          </button>
+          {showPreview && (
+            <button 
+              disabled={!selectedFile || isParsed} 
+              onClick={()=> { mutateAsync({ path: selectedFile }) }} 
+              className="bg-green-500 text-white p-2 ml-2 rounded-r rounded-l hover:bg-green-600 disabled:bg-gray-300"
+            >
+              Process
+            </button>
+          )}
         </div>
       </div>
       <div className="overflow-x-auto">

@@ -9,9 +9,9 @@ export const getFiles= async () => {
 export const getFileContent = async ({ queryKey }: { queryKey: QueryKey }) => {
   const [, { path, isPreview }] = queryKey as [string, { path: string; isPreview: boolean }]
 
-  return API.get(`files`, { params: { isPreview, path } }).then((response) => FileContentSchema.parse(response.data))
+  return API.get('files', { params: { isPreview, path } }).then((response) => FileContentSchema.parse(response.data))
 }
 
-export const proccessFile = async ({ path }: { path: string}) => {
-  return API.post(`files`, { path }).then((response) => ProccessedFileContentSchema.parse(response.data))
+export const proccessFile = async (payload: { path: string }) => {
+  return API.post('files', payload).then((response) => ProccessedFileContentSchema.parse(response.data))
 }

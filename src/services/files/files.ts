@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query"
 import { getFileContent, getFiles, proccessFile } from "./request";
-import { FileContentResponse, FilesResponse } from "./types";
+import { FileContentResponse, FilesResponse, ProccessedFileContentVariables } from "./types";
 
 export const useFiles = () => {
   const { data, status, refetch } = useQuery<FilesResponse>(['getFiles'], getFiles);
@@ -32,6 +32,6 @@ export const useFileContent = ({ path, enabled, isPreview }: { path?: string; en
   };
 };
 
-export const useProcessFile = () => {
-  return useMutation(['processFile'], proccessFile)
+export const useProcessFile = ({ ...opts }: ProccessedFileContentVariables = {}) => {
+  return useMutation((payload: { path: string }) => proccessFile(payload), { ...opts })
 }
